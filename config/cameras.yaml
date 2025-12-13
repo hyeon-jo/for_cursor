@@ -1,0 +1,119 @@
+# Ego Vehicle Mask Generator - Camera Configuration Template
+# 각 카메라별 설정을 정의합니다.
+
+# 전역 설정
+global:
+  default_resolution: [1920, 1080]
+  frame_sample_count: 100  # 분석에 사용할 프레임 수
+  variance_threshold: 50.0  # 분산 임계값 (낮을수록 엄격)
+  morphology_kernel_size: 5  # 형태학적 연산 커널 크기
+
+# 카메라별 설정
+cameras:
+  # 1. 전방 협각 카메라 - 본넷 및 전방 라이다 센서 보임
+  front_narrow:
+    type: narrow
+    resolution: [1920, 1080]
+    has_vignetting: false
+    expected_ego_regions:
+      - name: hood
+        description: "본넷 영역"
+        hint_roi: [0, 850, 1920, 230]  # x, y, width, height
+      - name: lidar_sensor
+        description: "전방 라이다 센서"
+        hint_roi: [800, 750, 320, 100]
+
+  # 2. 전방 광각 카메라 - 본넷 앞쪽, 비네팅 영역
+  front_wide:
+    type: wide
+    resolution: [1920, 1080]
+    has_vignetting: true
+    vignetting_config:
+      threshold: 0.7  # 중심 대비 밝기 비율 임계값
+      margin: 50  # 비네팅 마진 (픽셀)
+    expected_ego_regions:
+      - name: hood_front
+        description: "본넷 앞쪽 영역"
+        hint_roi: [0, 900, 1920, 180]
+
+  # 3. 측방 협각 카메라 (좌측)
+  side_narrow_left:
+    type: narrow
+    resolution: [1920, 1080]
+    has_vignetting: false
+    expected_ego_regions:
+      - name: roof_lidar_mount
+        description: "천장 라이다 거치용 슬롯"
+        hint_roi: [0, 0, 400, 200]
+      - name: side_mirror
+        description: "사이드 미러"
+        hint_roi: [1600, 300, 320, 250]
+      - name: car_body
+        description: "차량 옆구리 (문, 손잡이, 스커트)"
+        hint_roi: [1700, 550, 220, 530]
+
+  # 4. 측방 협각 카메라 (우측)
+  side_narrow_right:
+    type: narrow
+    resolution: [1920, 1080]
+    has_vignetting: false
+    expected_ego_regions:
+      - name: roof_lidar_mount
+        description: "천장 라이다 거치용 슬롯"
+        hint_roi: [1520, 0, 400, 200]
+      - name: side_mirror
+        description: "사이드 미러"
+        hint_roi: [0, 300, 320, 250]
+      - name: car_body
+        description: "차량 옆구리 (문, 손잡이, 스커트)"
+        hint_roi: [0, 550, 220, 530]
+
+  # 5. 측방 광각 카메라 (좌측)
+  side_wide_left:
+    type: wide
+    resolution: [1920, 1080]
+    has_vignetting: true
+    vignetting_config:
+      threshold: 0.7
+      margin: 50
+    expected_ego_regions:
+      - name: car_body
+        description: "차량 옆구리"
+        hint_roi: [1650, 400, 270, 680]
+
+  # 6. 측방 광각 카메라 (우측)
+  side_wide_right:
+    type: wide
+    resolution: [1920, 1080]
+    has_vignetting: true
+    vignetting_config:
+      threshold: 0.7
+      margin: 50
+    expected_ego_regions:
+      - name: car_body
+        description: "차량 옆구리"
+        hint_roi: [0, 400, 270, 680]
+
+  # 7. 후방 광각 카메라
+  rear_wide:
+    type: wide
+    resolution: [1920, 1080]
+    has_vignetting: true
+    vignetting_config:
+      threshold: 0.7
+      margin: 50
+    expected_ego_regions:
+      - name: rear_bumper
+        description: "하단 범퍼"
+        hint_roi: [0, 900, 1920, 180]
+      - name: license_plate
+        description: "자차 번호판"
+        hint_roi: [760, 850, 400, 100]
+
+  # 추가 카메라 (필요시 설정)
+  # 8-11번 카메라는 실제 구성에 맞게 추가
+  # rear_narrow:
+  #   type: narrow
+  #   resolution: [1920, 1080]
+  #   ...
+
